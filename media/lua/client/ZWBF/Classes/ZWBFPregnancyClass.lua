@@ -220,8 +220,8 @@ function PregnancyClass:updateBelly(level)
 
 	-- postpartum/recovery
 	-- doesn't work unless updateBelly is also called during recovery phase
-	if self.player:getModData().ZWBFWomb.CyclePhase == "Recovery" then
-		local wombData = self.player:getModData().ZWBFWomb
+	local wombData = self.player:getModData().ZWBFWomb
+	if wombData and wombData.CyclePhase == "Recovery" then
 		level = 1 + math.floor((-(wombData.CycleDay-1) / SBVars.PregnancyRecovery) * 0.35 * #self.BELLIES)
 	elseif self:getInLabor() then
 		level = 10
