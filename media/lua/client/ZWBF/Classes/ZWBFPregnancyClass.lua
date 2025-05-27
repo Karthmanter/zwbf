@@ -37,16 +37,11 @@ PregnancyClass.BABY_LIST = {
 	"Baby_14"
 }
 PregnancyClass.BELLIES = {
-	instanceItem("ZWBF.ZWBF_Belly_00"),
-	instanceItem("ZWBF.ZWBF_Belly_01"),
-	instanceItem("ZWBF.ZWBF_Belly_02"),
-	instanceItem("ZWBF.ZWBF_Belly_03"),
-	instanceItem("ZWBF.ZWBF_Belly_04"),
-	instanceItem("ZWBF.ZWBF_Belly_05"),
-	instanceItem("ZWBF.ZWBF_Belly_06"),
-	instanceItem("ZWBF.ZWBF_Belly_07"),
-	instanceItem("ZWBF.ZWBF_Belly_08"),
-	instanceItem("ZWBF.ZWBF_Belly_09"),
+	instanceItem("ZWBF.ZWBF_Belly_00"), instanceItem("ZWBF.ZWBF_Belly_01"),
+	instanceItem("ZWBF.ZWBF_Belly_02"), instanceItem("ZWBF.ZWBF_Belly_03"),
+	instanceItem("ZWBF.ZWBF_Belly_04"), instanceItem("ZWBF.ZWBF_Belly_05"),
+	instanceItem("ZWBF.ZWBF_Belly_06"), instanceItem("ZWBF.ZWBF_Belly_07"),
+	instanceItem("ZWBF.ZWBF_Belly_08"), instanceItem("ZWBF.ZWBF_Belly_09"),
 	instanceItem("ZWBF.ZWBF_Belly_10"),
 }
 
@@ -217,7 +212,7 @@ function PregnancyClass:updateBelly(level)
 	end
 	
 	level = math.floor((level or self:getProgress()) * #self.BELLIES)
-
+	
 	-- postpartum/recovery
 	-- doesn't work unless updateBelly is also called during recovery phase
 	local wombData = self.player:getModData().ZWBFWomb
@@ -226,7 +221,7 @@ function PregnancyClass:updateBelly(level)
 	elseif self:getInLabor() then
 		level = 10
 	end
-
+	
 	self.player:setWornItem("ZWBFPregnancyBelly", nil) -- clear any existing bellies
 
 	-- pregnancy belly
@@ -358,12 +353,14 @@ PregnancyClass.Debug = {}
 
 --- (DEBUG) Advances pregnancy progress by a specified number of hours
 function PregnancyClass.Debug:advancePregnancy(hours)
-	self.data.PregnancyCurrent = self.data.PregnancyCurrent + (hours * 60)
+	local pregnancyData = getPlayer():getModData().ZWBFPregnancy
+	pregnancyData.PregnancyCurrent = pregnancyData.PregnancyCurrent + (hours * 60)
 end
 
 --- (DEBUG) Advances pregnancy to just before labor
 function PregnancyClass.Debug:advanceToLabor()
-	self.data.PregnancyCurrent = self.data.PregnancyDuration - 1
+	local pregnancyData = getPlayer():getModData().ZWBFPregnancy
+	pregnancyData.PregnancyCurrent = pregnancyData.PregnancyDuration - 1
 end
 
 return PregnancyClass
