@@ -202,29 +202,39 @@ end
 
 -- Add visual bellies during pregnancy
 function PregnancyClass:updateBelly(level)
+	local showRecoveryBelly = true
+
 	-- use modoptions if available
 	if ModOptions and ModOptions.getInstance then
-		local new_bellies = ZWBFModOptions.options_data.new_bellies.value or true
-		if new_bellies == false then
+		local showBelly = ZWBFModOptions.options_data.showBelly.value
+		if showBelly == false then
 			self.player:setWornItem("ZWBFPregnancyBelly", nil) -- clear any existing bellies
 			return -- exit function if feature disabled
 		end
+		showRecoveryBelly = ZWBFModOptions.options_data.showRecoveryBelly.value
 	end
 	
-	level = math.floor((level or self:getProgress()) * #self.BELLIES)
+	level = math.min(#self.BELLIES, math.floor((level or self:getProgress() + 0.06) * #self.BELLIES))
 	
-	-- postpartum/recovery
-	-- doesn't work unless updateBelly is also called during recovery phase
-	local wombData = self.player:getModData().ZWBFWomb
-	if wombData and wombData.CyclePhase == "Recovery" then
-		level = 1 + math.floor((-(wombData.CycleDay-1) / SBVars.PregnancyRecovery) * 0.35 * #self.BELLIES)
+	if showRecoveryBelly then
+		-- postpartum/recovery belly
+		-- doesn't work unless updateBelly is also called during recovery phase
+		
+		local wombData = self.player:getModData().ZWBFWomb
+		
+		if not self:getIsPregnant() and wombData and wombData.CycleDay < 1 then
+			-- recovery belly shrinks over time
+			level = 1 + math.floor((-(wombData.CycleDay-1) / SBVars.PregnancyRecovery) * 5)
+		elseif self:getInLabor() then
+			-- recovery belly enabled, giving birth shrinks belly partially
+			level = #self.BELLIES - math.ceil((math.min(math.max(0, self.data.LaborProgress-0.5), 0.2) / 0.2) * 5)
+		end
 	elseif self:getInLabor() then
-		level = 10
+		-- recovery belly disabled, giving birth shrinks belly fully
+		level = #self.BELLIES - math.ceil((math.min(math.max(0, self.data.LaborProgress-0.5), 0.2) / 0.2) * #self.BELLIES)
 	end
 	
-	self.player:setWornItem("ZWBFPregnancyBelly", nil) -- clear any existing bellies
-
-	-- pregnancy belly
+	-- setup visible pregnancy belly
 	if level > 1 then
 		self.BELLIES[level]:getVisual():setTextureChoice(self.player:getHumanVisual():getSkinTextureIndex()) -- update skin color
 		self.player:setWornItem("ZWBFPregnancyBelly", self.BELLIES[level])

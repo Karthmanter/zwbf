@@ -20,6 +20,4 @@ IGUI_EN = {
 	IGUI_ZWBF_UI_Milk_Amount		= "Amount",
 	IGUI_ZWBF_UI_Baby_Vomits		= "The baby vomits on you",
 	IGUI_ZWBF_UI_Scream				= "*Scream*",
-	IGUI_ZWBF_UI_NewBellies			= "Visual Bellies",
-	IGUI_ZWBF_UI_NewBellies_TT		= "Show custom bellies during pregnancy, has some clipping but looks cool.<br>",
 }
